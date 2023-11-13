@@ -2,6 +2,7 @@ import pygame
 
 FPS = 60
 RED = (255,0,0)
+BLACK = (0,0,0)
 
 pygame.init()
 
@@ -9,7 +10,7 @@ pygame.display.set_caption("HRA")
 
 WIDTH, HEIGHT = 1280, 800
 
-win = pygame.display.set_mode((WIDTH, HEIGHT))
+window = pygame.display.set_mode((WIDTH, HEIGHT))
 
 class Player(pygame.sprite.Sprite):
     GRAVITY = 1
@@ -24,14 +25,14 @@ class Player(pygame.sprite.Sprite):
         self.height = height
 
     def jump(self):
-        self.vel = -self.GRAVITY 
+        self.vel = -self.GRAVITY * 7
         self.fall_count = 0
 
     def move(self, vel):
         self.rect.y += vel
         
     def loop(self, fps):
-        self.vel = self.fall_count/fps * self.GRAVITY*5
+        self.vel += self.fall_count/fps * self.GRAVITY / 2
         self.move(self.vel)
         self.fall_count += 1
 
@@ -63,6 +64,7 @@ def main(win):
     while run:
         clock.tick(FPS)
         pygame.display.update()
+        window.fill(BLACK)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -77,10 +79,10 @@ def main(win):
         player.loop(FPS)
         player.draw(win)
         player.update()
-        if player.rect.bottom >= HEIGHT:
+        if player.rect.bottom >= HEIGHT or player.rect.top <= 0:
             death()
     pygame.quit()
     quit()
 
 if __name__ == "__main__":
-    main(win)
+    main(window)
