@@ -47,7 +47,28 @@ class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
+        self.width = width
+        self.height = height
+        self.y = y
 
+    def move(self, vel):
+        self.rect.x -= vel
+    
+    def loop(self):
+        self.vel = 5
+        self.move(self.vel)
+
+    def draw(self, win):
+        pygame.draw.rect(win, RED, (self.rect.x, self.rect.y, self.width, self.height))
+
+    def update(self):
+        self.rect = pygame.Rect(self.rect.x, self.y, self.width, self.height)
+def collide_upper(player, upper):
+    if pygame.sprite.collide_rect(player, upper):
+        death()
+def collide_lower(player, lower):
+    if pygame.sprite.collide_rect(player, lower):
+        death()       
 
 def death():
     pygame.quit()
@@ -58,7 +79,9 @@ def main(win):
     clock = pygame.time.Clock()
 
     player = Player(300, HEIGHT/2, 50, 50)
-
+    pipe1 = Pipe(WIDTH, 0, 30, 200)
+    pipe2 = Pipe(WIDTH, HEIGHT-400, 30, 400)
+    
 
     run = True
     while run:
@@ -77,8 +100,16 @@ def main(win):
                     pygame.quit()
                     quit()
         player.loop(FPS)
+        pipe1.loop()
+        pipe2.loop()
         player.draw(win)
+        pipe1.draw(win)
+        pipe2.draw(win)
         player.update()
+        pipe1.update()
+        pipe2.update()
+        collide_upper(player,pipe1)
+        collide_lower(player, pipe2)
         if player.rect.bottom >= HEIGHT or player.rect.top <= 0:
             death()
     pygame.quit()
